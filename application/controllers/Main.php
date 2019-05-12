@@ -25,9 +25,9 @@ class Main extends CI_Controller {
 		$data = array();
 		$data['js'] = $this->load->view('include/script.php', NULL, TRUE);
 		$data['css'] = $this->load->view('include/style.php', NULL, TRUE);
-		if($this->session->userdata['isUserLoggedIn']['isLoggedIn'] !=true ){
-			redirect('/Main/index', 'refresh');
-		}
+			if($this->session->userdata['isUserLoggedIn']['isLoggedIn'] !=true ){
+				redirect('/Main/index', 'refresh');
+			}
 		$this->load->view('home', $data);
 	}
 
@@ -99,7 +99,8 @@ class Main extends CI_Controller {
 						);
 
 					$this->session->set_userdata('isUserLoggedIn', $sessionData);
-					$loggedInUser = $sessionData;	
+						 	
+					$data['products'] = $this->CustomerModel->getProducts($result[0]->customerID);
 					//$data['success_msg'] = 'Welcome, '.$result[0]->customerUsername.'!';
 					$this->load->view('home', $data);
 		}
@@ -113,6 +114,7 @@ class Main extends CI_Controller {
 
 	public function logout()
 	{
+		
 		$this->session->unset_userdata('isUserLoggedIn');
         $this->session->sess_destroy();
         redirect(base_url(), 'refresh');
@@ -120,26 +122,19 @@ class Main extends CI_Controller {
 
 	public function recoverPassword()
 	{	
-		$data = array();
-		$data['js'] = $this->load->view('include/script.php', NULL, TRUE);
-		$data['css'] = $this->load->view('include/style.php', NULL, TRUE);
-
-		if($this->session->userdata('error_msg')){
-			$data['error_msg'] = $this->session->userdata('error_msg');
-			$this->session->unset_userdata('error_msg');
-		}
 
 		$custEmail = $this->input->post('email');
 		$result = $this->CustomerModel->getEmail($custEmail);
 
 		if($result==true){
 			$this->CustomerModel->updatePassword($custEmail);
-			$data['success_msg'] = 'An e-mail containing your new password has been sent to '.$custEmail.'.';
-			$this->load->view('forgetPassword', $data);
+			$this->session->set_flashdata('success','An e-mail containing your new password has been sent to '.$custEmail.'.');
+			redirect('Main/forgetPassword');
+			
 		}
 		else{
-			$data['error_msg'] = 'Entered e-mail does not exist';
-			$this->load->view('forgetPassword', $data);
+			$this->session->set_flashdata('fail','Entered e-mail does not exist.');
+			redirect('Main/forgetPassword');
 		}
 
 	}
@@ -160,7 +155,7 @@ class Main extends CI_Controller {
 		else{
 			$currentPass = $this->input->post('oldPass');
 			$newPass = $this->input->post('newPass');
-		
+			
 			$result = $this->CustomerModel->changePassword($currentPass, $newPass, $id);
 
 			if($result==true){
@@ -178,18 +173,6 @@ class Main extends CI_Controller {
 
 	public function addNewTicket()
 	{
-		$data = array();
-		$data['js'] = $this->load->view('include/script.php', NULL, TRUE);
-		$data['css'] = $this->load->view('include/style.php', NULL, TRUE);
-		
-		if($this->session->userdata('success_msg')){
-			$data['success_msg'] = $this->session->userdata('success_msg');
-			$this->session->unset_userdata('success_msg');
-		}
-		if($this->session->userdata('error_msg')){
-			$data['error_msg'] = $this->session->userdata('error_msg');
-			$this->session->unset_userdata('error_msg');
-		}
 		$id = $this->session->userdata['isUserLoggedIn']['customerID'];
 		$email =  $this->session->userdata['isUserLoggedIn']['customerEmail'];
 
@@ -232,12 +215,10 @@ class Main extends CI_Controller {
 		);
 
 		$result = $this->CustomerModel->insertNewTicket($data, $email);
-		if($result==TRUE){
-			//redirect(base_url('index.php/Main/index'));
-			$data['success_msg'] = 'Ticket successfully submitted.';
-			$data['js'] = $this->load->view('include/script.php', NULL, TRUE);
-			$data['css'] = $this->load->view('include/style.php', NULL, TRUE);
-			$this->load->view('home', $data);
+		if($result==true){
+			
+			$this->session->set_flashdata('success','Your Ticket has been submitted.');
+			redirect('Main/homepage');
 		}
 	}
 
@@ -250,9 +231,25 @@ class Main extends CI_Controller {
 		$adminID = $this->CustomerModel->getTicketById($ticketID);
 		$data['adminDetails'] = $this->CustomerModel->getAdminInfo($adminID[0]['userID']);
 		if($this->session->userdata['isUserLoggedIn']['isLoggedIn'] !=true ){
-			redirect('/Main/index', 'refresh');
+			redirect('/Main/homepage');
 		}
+		
 		$this->load->view('ticketDetails', $data);
 	}
+
+	public function addFeedback($ticketID){
+		$feedback = array(
+			'approved' => $this->input->post("feedRadio"),
+			'feedback' => $this->input->post("feedbackText")
+		);
+
+		$result = $this->CustomerModel->insertFeedback($feedback, $ticketID);
+
+		if($result == true){
+			$this->session->set_flashdata('success','Your feedback has been submitted. Please check your e-mail.');
+			redirect('Main/ticketDetails/'.$ticketID);
+		}
+
+	}
+
 }
-?>

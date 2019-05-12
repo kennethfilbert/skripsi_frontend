@@ -10,9 +10,10 @@
 		echo $css;
     ?>
     <script>
-			$(document).ready(function(){
-				$('#history').DataTable();
-			});
+			//$(document).ready(function(){
+			//	$('#changelog').DataTable();
+			//});
+
 	</script>
 </head>
 <body>
@@ -77,6 +78,17 @@
 
             <div style="margin:2%;">
                 <h1>Ticket Details</h1>
+                <?php
+                    /*if(!empty($success_msg)){
+                        echo '<div style="color: blue;"
+                            <h3 class="statusMsg">'.$success_msg.'</h3></div>';
+                    }elseif(!empty($error_msg)){
+                        echo ' <div style="color: red;">
+                            <h3 class="statusMsg">'.$error_msg.'</h3></div>';
+                    }*/
+                    echo '<p style="color:blue">'.$this->session->flashdata('success').'</p>';
+                            
+                ?>  
                 <ul class="list-group">
                 <li class="list-group-item"><?php echo "Ticket ID: ".$details[0]['ticketID'];?></li>
                 <li class="list-group-item"><?php echo "Token #: ".$details[0]['token'];?></li>
@@ -117,11 +129,21 @@
                 </li>
                 <li class="list-group-item"><?php echo "Description: ".$details[0]['description'];?></li>
                 
-                <li class="list-group-item">Screenshot: <br><?php echo '<img src="'.$details[0]['picturePath'].'" style="width:60%">'; ?> </li>
+                <li class="list-group-item" >Screenshot: <br>
+                    <img id="screenShot" src='<?php echo "".$details[0]['picturePath']."";?>' class="abs" style="width:60%">  
+                    <br><a href='<?php echo "".$details[0]['picturePath']."";?>'>View full size</a>
+                </li>
             </ul>
             
+            <div id="imgModal" class="modal">
+                <span class="close">&times;</span>
+                <img class="modal-content" id="img01">
+
+            </div>
+
+
         </div>
-        <div class="container">
+        <div class="container-sm" style="margin:3%">
         <h4>Changelog / Work History</h4>
             <table id="changelog" class='table table-striped table-bordered' cellspacing='0' style="margin-top:3%">
                 <thead>
@@ -138,7 +160,7 @@
                 <?php 
                     if($changelog == false){
                         echo "<tr>";
-                        echo "<td> No Data Yet </td>";
+                        echo '<td rowspan="5"> No Data Yet </td>';
                         echo "</tr>";
                     }
                     else{
@@ -153,17 +175,48 @@
                                     echo "<tr>";
                                     echo "<td>".$changeId."</td>";
                                     echo "<td>".$ticketId."</td>";
-                                    echo "<td>".$workedBy."</td>";
+                                    if($workedBy == null){
+                                        echo "<td><i>";
+                                        echo "Not Yet";
+                                        echo "</i></td>";
+                                    }
+                                    else{
+                                        echo "<td>".$adminDetails[0]['userName']."</td>";
+                                    }
                                     echo "<td>".$dateUpdated."</td>";
                                     echo "<td>".$description."</td>";
                                     echo "</tr>";
     
                          }
+                         
                     }
+                    
                    
                 ?>             
                 </tbody>
             </table>
+            <?php
+                if($details[0]['status'] == 3){
+                    echo "Were u satisfied?? <br>";
+                    //echo '<a class="btn btn-primary" style="margin:2%" name="btnYes" href="'.base_url().'index.php/Main/ticketDetails/'.$value['ticketID'].'">';
+                    echo form_open_multipart('Main/addFeedback/'.$details[0]['ticketID']); 
+                        echo '<form role="form" class="form-horizontal" action=""  method="post" style="margin: 3%">';
+                            echo '<div class="form-group">';
+                                echo '<input type="radio" name="feedRadio" value=1>';
+                                echo "Yes<br>";
+                                //echo '<a class="btn btn-danger" name="btnNo" href="'.base_url().'index.php/Main/ticketDetails/'.$value['ticketID'].'">';
+                                echo '<input type="radio" name="feedRadio" value=0>';
+                                echo "No<br>";
+                            echo '</div>';
+                            echo '<div class="form-group">';
+                                echo '<textarea name="feedbackText" class="form-group" rows="10" cols="60" required=""></textarea>';
+                            echo '</div>';
+                            echo '<input class="btn btn-primary" type="submit" value="Submit Your Feedback">';
+                        echo '</form>';
+                    echo form_close();
+                    
+                }
+            ?>
         </div>
     </div>
 </body>

@@ -87,8 +87,9 @@
 				    <tr>
                         <th>Token</th>
                         <th>Date Added</th>
-                        <th>Title</th>
                         <th>Customer Name</th>
+                        <th>Title</th>
+                        
                         <th>Product Name</th>
                         <th>Inquiry Type</th>
                         <th>Urgency</th>

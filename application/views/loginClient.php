@@ -19,10 +19,11 @@
                         width: 30%">
     <h1 style="text-align:center"> PT Mitra Mentari Global Customer Support </h1>
         <?php
-            if(!empty($success_msg)){
-                echo '<p class="statusMsg" style="color: blue"> '.$success_msg.'</p>';
-            }elseif(!empty($error_msg)){
-                echo '<p class="statusMsg" style="color: red">'.$error_msg.'</p>';
+            if($this->session->flashdata('success')!=null){
+                echo '<p style="color:blue">'.$this->session->flashdata('success').'</p>';
+            }
+            elseif($this->session->flashdata('fail')!=null){
+                echo '<p style="color:red">'.$this->session->flashdata('fail').'</p>';
             }
         ?>
         <?php echo form_open('Main/loginCustomer'); ?>

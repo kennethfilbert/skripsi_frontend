@@ -13,6 +13,16 @@ class CustomerModel extends CI_Model{
             date_default_timezone_set('Asia/Jakarta'); 
             $date = date('d/m/Y H:i:s');
 
+            if($data['status']==1){
+                $status = "Open";
+            }
+            elseif($data['status']==2){
+                $status = "Ongoing";
+            }
+            elseif($data['status']==3){
+                $status = "Closed";
+            }
+
             $subject = "Your Support Ticket has been submitted";
 
         			/*$message = "
@@ -78,7 +88,7 @@ class CustomerModel extends CI_Model{
                                 Description         : ".$data['description']."
                             </li>
                             <li>
-                                Status              :<b> ".$data['status']."</b>
+                                Status              :<b> ".$status."</b>
                             </li>
 
                         <p>We will notify you via further e-mails regarding the progress of your ticket.</p>
@@ -173,6 +183,18 @@ class CustomerModel extends CI_Model{
 
         if ($query->num_rows() == 1) {
             return true;
+        } else {
+            return false;
+        }
+    }
+
+    public function getProducts($id){
+        $this->db->select('productName');
+        $this->db->from('products');
+        $this->db->where('customerID', $id);
+        $query = $this->db->get();
+        if ($query->num_rows() > 0) {
+            return $query->result_array();
         } else {
             return false;
         }
@@ -331,5 +353,19 @@ class CustomerModel extends CI_Model{
             return false;
         }
     } 
+
+    public function insertFeedback($feedback, $ticketID){
+        $this->db->set($feedback);
+        $this->db->where('ticketID', $ticketID);
+        $this->db->update('tickets');
+        
+        
+        if ($this->db->affected_rows() > 0) {
+            return true;
+        }
+        else{
+            return false;
+        }
+    }
     
 }

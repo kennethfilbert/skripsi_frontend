@@ -76,18 +76,14 @@
                     </div>
                     
                         <?php
-                            if(!empty($success_msg)){
-                                echo '<div style="color: blue;">
-                                        <h3 class="statusMsg">'.$success_msg.'</h3></div>';
-                            }elseif(!empty($error_msg)){
-                                echo ' <div style="color: red;">
-                                        <h3 class="statusMsg">'.$error_msg.'</h3></div>';
-                            }
                             
-                            if(!empty($upload_status)){
-                                echo ' <div style="color: grey;">
-                                        <h3 class="statusMsg">'.$upload_status.'</h3></div>';
+                            if($this->session->flashdata('success')!=null){
+                                echo '<p style="color:blue">'.$this->session->flashdata('success').'</p>';
                             }
+                            elseif($this->session->flashdata('fail')!=null){
+                                echo '<p style="color:red">'.$this->session->flashdata('fail').'</p>';
+                            }
+    
                         ?>
                      
                         <h2>Contact Info</h2>
@@ -114,24 +110,28 @@
                             <input type="text" class="form-control" name="title" required="" >
                             <?php echo form_error('name','<span class="help-block">','</span>'); ?>
                         </div>
-                        <label for="product">Product</label>
+                        <label for="product"><b>Product</b></label>
                         <div class="form-group">
                             <select name="product">
-                                <option value="volvo">Volvo</option>
-                                <option value="saab">Saab</option>
-                                <option value="mercedes">Mercedes</option>
-                                <option value="audi">Audi</option>
+                            <?php
+                                 foreach($products as $key => $value){
+                                    echo '<option value="'.$value['productName'].'">'.$value['productName'].'</option>';
+                                 }
+                                 
+                            ?>
+                            <option value="Others">Others/Unrelated</option>
                             </select>
                         </div>
-                        <label for="inquiry">Inquiry Type</label>
+                        <label for="inquiry"><b>Inquiry Type</b></label>
                         <div class="form-group">
                             <select name="inquiry">
+                                
                                 <option value="Complaint">Problem report/Complaint</option>
                                 <option value="Question">Questions</option>
                                 <option value="Critique/Suggestion">Critique/Suggestion</option>
                             </select>
                         </div>
-                        <label for="urgency">Urgency</label>
+                        <label for="urgency"><b>Urgency</b></label>
                         <div class="form-group">
                             <select name="urgency">
                                 <option value="Low">Low</option>
@@ -139,7 +139,7 @@
                                 <option value="High">High</option>
                             </select>
                         </div>
-                            <label for="description">Description</label>
+                            <label for="description"><b>Description</b></label>
                                 <!--<div id="editor" name="description" class="form-group" style="height: 300px; width: 600px">
                                     <textarea name="descriptiontext"></textarea>
                                 </div>-->
