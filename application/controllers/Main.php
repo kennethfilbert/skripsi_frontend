@@ -25,6 +25,8 @@ class Main extends CI_Controller {
 		$data = array();
 		$data['js'] = $this->load->view('include/script.php', NULL, TRUE);
 		$data['css'] = $this->load->view('include/style.php', NULL, TRUE);
+		$customerID = $this->session->userdata['isUserLoggedIn']['customerID'];
+		$data['products'] = $this->CustomerModel->getProducts($customerID);
 			if($this->session->userdata['isUserLoggedIn']['isLoggedIn'] !=true ){
 				redirect('/Main/index', 'refresh');
 			}
@@ -245,11 +247,154 @@ class Main extends CI_Controller {
 
 		$result = $this->CustomerModel->insertFeedback($feedback, $ticketID);
 
-		if($result == true){
+		$emailData = $this->CustomerModel->getTicketById($ticketID);
+
+		if($feedback['approved']==0 && $result == true){
+
+			date_default_timezone_set('Asia/Jakarta'); 
+            $date = date('Y/m/d H:i:s');
+
+            $subject = "Your Ticket Feedback";
+
+			$message = "
+        			<html>
+        			<head>
+        				<title>Your New Password</title>
+        				
+        			</head>
+        			<body>
+        				<div style='display: block; margin-left: auto;
+        				margin-right: auto; width: 70%;'>
+        				
+        				<p>Dear: </p>
+        				".$emailData[0]['customerName']."
+        				<br><p>On ".$date." , Based on the feedback for the following support ticket: <br>
+						<ul>
+                            <li>
+                                Ticket ID/Token     : ".$emailData[0]['token']."
+                            </li>
+                            <li>
+                                Ticket Title/General Idea     : ".$emailData[0]['ticketTitle']."
+                            </li>
+                            <li>
+                                Contact Name        : ".$emailData[0]['customerName']."
+                            </li>
+                            <li>
+                                Contact E-mail      : ".$emailData[0]['customerEmail']."
+                            </li>
+                            <li>
+                                Phone no.           : ".$emailData[0]['customerPhone']."
+                            </li>
+                            <li>
+                                Regarding Product   : ".$emailData[0]['productName']."
+                            </li>
+                            <li>
+                                Inquiry Type        : ".$emailData[0]['inquiryType']."
+                            </li>
+                           
+                            <li>
+                                Description         : ".$emailData[0]['description']."
+                            </li>
+                        </ul>
+                        <br>
+						<p>You indicated that the changes made were not satisfactory. Our employees will continue to work on the problem(s), and your ticket's status has been reopened.</p>
+        				<p>Regards,</p>
+
+        				<p>PT MMG Support</p>
+        				
+        			</div>
+        		</body>
+				</html>";
 			$this->session->set_flashdata('success','Your feedback has been submitted. Please check your e-mail.');
-			redirect('Main/ticketDetails/'.$ticketID);
+			
+		}
+		elseif($feedback['approved']==1 && $result == true){
+
+			date_default_timezone_set('Asia/Jakarta'); 
+            $date = date('Y/m/d H:i:s');
+
+            $subject = "Your Ticket Feedback";
+
+			$message = "
+        			<html>
+        			<head>
+        				<title>Your New Password</title>
+        				
+        			</head>
+        			<body>
+        				<div style='display: block; margin-left: auto;
+        				margin-right: auto; width: 70%;'>
+        				
+        				<p>Dear: </p>
+        				".$emailData[0]['customerName']."
+        				<br><p>On ".$date." , Based on the feedback for the following support ticket: <br>
+						<ul>
+                            <li>
+                                Ticket ID/Token     : ".$emailData[0]['token']."
+                            </li>
+                            <li>
+                                Ticket Title/General Idea     : ".$emailData[0]['ticketTitle']."
+                            </li>
+                            <li>
+                                Contact Name        : ".$emailData[0]['customerName']."
+                            </li>
+                            <li>
+                                Contact E-mail      : ".$emailData[0]['customerEmail']."
+                            </li>
+                            <li>
+                                Phone no.           : ".$emailData[0]['customerPhone']."
+                            </li>
+                            <li>
+                                Regarding Product   : ".$emailData[0]['productName']."
+                            </li>
+                            <li>
+                                Inquiry Type        : ".$emailData[0]['inquiryType']."
+                            </li>
+                           
+                            <li>
+                                Description         : ".$emailData[0]['description']."
+                            </li>
+                        </ul>
+                        <br>
+						<p>You indicated that the changes made were to your satisfaction. Your ticket's status is now closed. Thank you for using this system.</p>
+						<p>If you have a moment, please fill our customer satisfaction survey at: </p>
+        				<p>Regards,</p>
+
+        				<p>PT MMG Support</p>
+        				
+        			</div>
+        		</body>
+				</html>";
+
+			$this->session->set_flashdata('success','Thank you for your feedback. Please check your e-mail.');
+			
 		}
 
+		$config = array(
+			'protocol' => 'smtp',
+			'smtp_host' => 'ssl://smtp.googlemail.com',
+			'smtp_port' => 465,
+			'smtp_user' => 'kennethfilbert343@gmail.com',
+			'smtp_pass' => 'HAUNtings',
+			'mailtype' => 'html',
+			'charset' => 'iso-8859-1',
+			'wordwrap' => TRUE
+			);
+
+		$this->email->initialize($config);
+		$this->email->set_mailtype("html");
+		$this->email->set_newline("\r\n");
+
+		$this->email->to($emailData[0]['customerEmail']);
+		$this->email->from('support@mmg.com','Mitra Mentari Global');
+		$this->email->subject($subject);
+		$this->email->message($message);
+
+				//Send email
+		$this->email->send();
+		$this->load->library('encrypt');
+		
+		redirect('Main/ticketDetails/'.$ticketID);
 	}
 
 }

@@ -12,7 +12,7 @@
 </head>
 <body class="backgrnd">
     
-    <div class="container" style="margin-top: 5%">
+    <div class="container" style="margin-top: 5%; border-radius:30px; padding:5%; background:white">
     <img src="http://192.168.0.10/skripsi/assets/mmg.png" style=" display: block;
                      margin-left: auto;
                         margin-right: auto;
@@ -53,7 +53,7 @@
     </div>
     
 </body>
-    <footer class="page-footer" style="padding-top: 10%">
+    <footer class="page-footer" style="padding-top: 2%">
          <div class="footer-copyright text-center py-3">© PT Mitra Mentari Global
            <p>2019</p>
         </div>

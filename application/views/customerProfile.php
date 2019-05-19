@@ -19,17 +19,21 @@
         <div class="wrapper">
             <nav id="sidebar">
                 <div class="sidebar-header">
-                    <img src="http://192.168.0.10/skripsi/assets/mmg.png" style=" display: block;
+                <?php
+                    echo '<a href="'.base_url().'index.php/Main/homepage">';
+                    echo '<img src="http://192.168.0.10/skripsi/assets/mmg.png" style=" display: block;
                         margin-left: auto;
                             margin-right: auto;
-                            width: 70%">
+                            width: 70%">';
+                    echo '</a>';
+                ?>
                     <p style="text-align:center">SUPPORT</p>
                 </div>
             
                 <ul class="list-unstyled components" style="margin-left: 3%; margin-right: 3%">   
                 <p style="text-align:center"><b>Actions</b></p>
                 <hr>
-                    <li>
+                    <li style="background: white; padding:5%; border-radius:25px">
                         <?php
                             echo '<a href="'.base_url().'index.php/Main/homepage">';
                             echo '<span class="fa fa-home"></span>';
@@ -38,7 +42,7 @@
                         ?>
                     </li>
                     <hr>
-                    <li>
+                    <li style="background: white; padding:5%; border-radius:25px">
                         <?php
                             echo '<a href="'.base_url().'index.php/Main/aboutUs','">';
                             echo '<span class="fa fa-info-circle"></span>';
@@ -47,7 +51,7 @@
                         ?>
                     </li>
                     <hr>
-                    <li>
+                    <li style="background: white; padding:5%; border-radius:25px">
                         <?php
                             echo '<a href="'.base_url().'index.php/Main/logout','">';
                             echo '<span class="fa fa-power-off"></span>';
@@ -69,7 +73,7 @@
                 <?php
                     echo '<p>Contact Name   : <br>'.$profileData[0]->customerUsername.'</p>';
                     echo '<p>Email          : '.$profileData[0]->customerEmail.'</p>';
-                    echo '<p>Company        : '.$profileData[0]->companyName.'</p>';
+                    echo '<p>Company(s)        : '.$profileData[0]->companyName.'</p>';
                     
                     echo '<a href="'.base_url().'index.php/Main/changePassword/'.$profileData[0]->customerID.'">';
                     echo '<span class="fa fa-pencil"></span>';
@@ -79,7 +83,7 @@
                 ?>
             </div>
             <hr>
-            <div class="container-expand-lg" style="margin:2%">
+            <div class="container-expand-lg" style="margin:2%;  border-left: 2px solid black; padding-left: 5%">
                 <h3>My Ticket History</h3>
                 <hr>
                 <table id="history" class='table table-striped table-bordered' cellspacing='0'>
@@ -98,41 +102,47 @@
 				    </tr>
                     </thead>
                     <tbody>
-                        <?php 
-                            foreach($ticketData as $key => $value){
-                                $token = $value['token'];
-                                $dateAdded = $value['dateAdded'];
-                                $title = $value['ticketTitle'];
-                                $customerName = $value['customerName'];
-                                $productName = $value['productName'];
-                                $inquiryType = $value['inquiryType'];
-                                $urgency = $value['urgency'];
-                                $status = $value['status'];
-
-                                echo "<tr>";
-                                echo "<td>".$token."</td>";
-                                echo "<td>".$dateAdded."</td>";
-                                echo "<td>".$customerName."</td>";
-                                echo "<td>".$title."</td>";
-                                echo "<td>".$productName."</td>";
-                                echo "<td>".$inquiryType."</td>";
-                                echo "<td>".$urgency."</td>";
-                                if($status==1){
-                                    echo "<td><b>Open</b></td>";
-                                }
-                                elseif($status==2){
-                                    echo "<td><b>Ongoing</b></td>";
-                                }
-                                elseif($status==3){
-                                    echo "<td><b>Closed</b></td>";
-                                }
-                                echo '<td><a class="btn btn-primary" name="btnDetail" href="'.base_url().'index.php/Main/ticketDetails/'.$value['ticketID'].'">';
-                                echo '<span class="fa fa-info"></span>';
-                                echo '   Details';
-                                echo '</a></td>';
-                                echo "</tr>";
-
+                        <?php
+                            if($ticketData == null){
+                                
                             }
+                            else{
+                                foreach($ticketData as $key => $value){
+                                    $token = $value['token'];
+                                    $dateAdded = $value['dateAdded'];
+                                    $title = $value['ticketTitle'];
+                                    $customerName = $value['customerName'];
+                                    $productName = $value['productName'];
+                                    $inquiryType = $value['inquiryType'];
+                                    $urgency = $value['urgency'];
+                                    $status = $value['status'];
+    
+                                    echo "<tr>";
+                                    echo "<td>".$token."</td>";
+                                    echo "<td>".$dateAdded."</td>";
+                                    echo "<td>".$customerName."</td>";
+                                    echo "<td>".$title."</td>";
+                                    echo "<td>".$productName."</td>";
+                                    echo "<td>".$inquiryType."</td>";
+                                    echo "<td>".$urgency."</td>";
+                                    if($status==1){
+                                        echo "<td><b>Open</b></td>";
+                                    }
+                                    elseif($status==2){
+                                        echo "<td><b>Ongoing</b></td>";
+                                    }
+                                    elseif($status==3){
+                                        echo "<td><b>Closed</b></td>";
+                                    }
+                                    echo '<td><a class="btn btn-primary" name="btnDetail" href="'.base_url().'index.php/Main/ticketDetails/'.$value['ticketID'].'">';
+                                    echo '<span class="fa fa-info"></span>';
+                                    echo '   Details';
+                                    echo '</a></td>';
+                                    echo "</tr>";
+    
+                                }
+                            } 
+                            
                         ?>
                     </tbody>
                 </table>

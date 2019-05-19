@@ -361,11 +361,13 @@ class CustomerModel extends CI_Model{
         
         
         if ($this->db->affected_rows() > 0) {
+
             return true;
         }
         else{
             return false;
         }
     }
+
     
 }
